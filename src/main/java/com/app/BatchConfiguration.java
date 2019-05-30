@@ -1,5 +1,8 @@
 package com.app;
 
+import java.sql.SQLException;
+import java.util.TimeZone;
+
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
@@ -18,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.app.listener.JobListener;
 import com.app.model.Persona;
@@ -78,5 +83,22 @@ public class BatchConfiguration {
 				.processor(processor())
 				.writer(writer)
 				.build();
+	}
+	
+	@Bean
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+	
+	@Bean
+	public DataSource dataSource() throws SQLException {
+
+		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/batch-demo?serverTimezone=" + TimeZone.getDefault().getID());
+		dataSource.setUsername("root");
+		dataSource.setPassword("Ad5FC3835C");
+
+		return dataSource;
 	}
 }
